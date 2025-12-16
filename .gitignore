@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment (Poetry)
+.venv/
+venv/
+env/
+.poetry/
+
+# Database
+*.db
+instance/
+chatdatabase.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Тестовые данные
+*.sqlite3
+
+# Flask secret keys
+.flaskenv
+.env
