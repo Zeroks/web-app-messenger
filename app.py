@@ -1,6 +1,5 @@
 import uuid
-from flask import Flask
-from flask import render_template
+from flask import Flask, render_template
 from flask import request
 from webargs.flaskparser import use_args
 from schemas.schemas import UserCreateSchema, FindUserSchema, PostMessageSchema
@@ -8,10 +7,9 @@ from flasgger import Swagger
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import JSON
 
-
 db = SQLAlchemy()
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='frontend/templates', static_folder='frontend/static')
 app.config['SWAGGER'] = {
     'openapi': '3.0.0',
     'title': 'Chat API',
@@ -19,6 +17,7 @@ app.config['SWAGGER'] = {
 }
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///chatdatabase.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 
 db.init_app(app)
 swagger = Swagger(app)
@@ -39,6 +38,12 @@ class MessagesDB(db.Model):
 
 with app.app_context():
     db.create_all()
+
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
 
 @app.route('/users', methods=['POST'])
 @use_args(UserCreateSchema(),location="json")
@@ -225,16 +230,6 @@ def edit_message(conversation_id, message_id):
 
     return { "sender" : message.sender,"text": message.text }
 
-
-@app.route('/submit', methods=['POST'])
-def submit():
-    name = request.form['name']
-    return f'Hello, {name}'
-
-
-@app.route('/hello/<name>')
-def hello(name):
-    return render_template('hello.html', name=name)
 
 if __name__ == '__main__':
     app.run(debug=True)
