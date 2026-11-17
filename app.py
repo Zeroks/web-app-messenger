@@ -229,6 +229,40 @@ def get_messages(conversation_id):
     return result
 
 
+@app.route('/dialogs/<user_id>', methods=['GET'])
+def get_user_dialogs(user_id):
+    """
+    Получение списка диалогов пользователя
+    ---
+    tags:
+      - Messages
+    parameters:
+      - name: user_id
+        in: path
+        type: string
+        required: true
+    responses:
+      200:
+        description: Список собеседников
+    """
+    messages = MessagesDB.query.filter(MessagesDB.dialog_id.contains(user_id)).all()
+    contact_ids = set()
+    for msg in messages:
+        parts = msg.dialog_id.split('_')
+        if parts[0] == user_id:
+            contact_ids.add(parts[1])
+        else:
+            contact_ids.add(parts[0])
+    users = UsersDB.query.filter(UsersDB.id.in_(contact_ids)).all()
+    result = []
+    for user in users:
+        result.append({
+            "id": user.id,
+            "name": user.name,
+            "age": user.age
+        })
+    return result
+
 @app.route('/messages/<conversation_id>/<message_id>', methods=['PATCH'])
 def edit_message(conversation_id, message_id):
     """

@@ -44,3 +44,6 @@ frontend-vite/dist/
 # Flask secret keys
 .flaskenv
 .env
+
+/package.json
+/package-lock.json
